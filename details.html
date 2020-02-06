@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Details Page</title>
+    <script src="jquery.js"></script>
+    <script src="dataTable.js"></script>
+</head>
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+
+<body>
+
+    <label>ID</label>
+    <div>
+        <input type="text" id="user_id" disabled>
+    </div>
+
+    <label>Login</label>
+    <div>
+        <input type="text" id="user_login" disabled>
+    </div>
+
+    <label>URL</label>
+    <div>
+        <input type="text" id="user_URL" disabled>
+    </div>
+
+    <label>Date</label>
+    <div>
+        <input type="text" id="user_date" disabled>
+    </div>
+
+    </br>
+
+    <button id="btnBack">Back</button>
+    </br>
+
+    <table id="tableX"></table>
+
+</body>
+
+<script>
+
+    $("#btnBack").click(function () {
+        window.location.replace("index.html");
+    });
+
+    $(document).ready(function () {
+        $('#tableX').DataTable({
+            "pagingType": "full_numbers"
+        });
+    });
+
+    $(document).ready(function () {
+
+        var username = localStorage.getItem("choosenUserName");
+
+        $.ajax({
+            url: `https://api.github.com/users/${username}`
+        }).then(function (data) {
+            console.log(data);
+            $("#user_id").val(data.id);
+            $("#user_login").val(data.login);
+            $("#user_URL").val(data.html_url);
+            $("#user_date").val(data.created_at);
+            localStorage.clear();
+        });
+
+        $.ajax({
+            url: `https://api.github.com/users/${username}/repos`
+        }).then(function (data) {
+            data.forEach(element => {
+                if (element.private == false) {
+                    createRepo(element.id, element.name, element.html_url);
+                }
+            });
+            createRepo("ID", "Name", "URL", "Link");
+        });
+
+    });
+
+    function createRepo(id, name, url, btn) {
+        var table = document.getElementById("tableX");
+
+        var row = table.insertRow(0);
+
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+
+        cell1.innerHTML = id;
+        cell2.innerHTML = name;
+        cell3.innerHTML = url;
+        if (btn !== "Link") {
+            cell4.innerHTML = `<a href="${url}">
+                                    <button>Visit</button>
+                                </a>`;
+        } else {
+            cell4.innerHTML = "Go To";
+        }
+
+    }
+
+</script>
+
+</html>

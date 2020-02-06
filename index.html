@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Home Page</title>
+    <script src="jquery.js"></script>
+    <script src="dataTable.js"></script>
+</head>
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+
+<body>
+
+    <table id="tableX"></table>
+
+</body>
+
+<script>
+
+    $(document).ready(function () {
+        $('#tableX').DataTable({
+            "pagingType": "full_numbers"
+        });
+    });
+
+    $(document).ready(function () {
+        $.ajax({
+            url: "https://api.github.com/users"
+        }).then(function (data) {
+            data.forEach(element => {
+                createUser(element.id, element.login);
+            });
+            createUser("ID", "Login");
+        });
+    });
+
+    function createUser(id, login, btn) {
+        var table = document.getElementById("tableX");
+
+        var row = table.insertRow(0);
+
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+
+        cell1.innerHTML = id;
+        cell2.innerHTML = login;
+        cell3.innerHTML = `<button id=${login} onclick="seeDetails(this.id)">Details</button>`;
+
+    }
+
+    function seeDetails(login) {
+        localStorage.setItem("choosenUserName", login);
+        window.location.replace("details.html");
+    }
+
+</script>
+
+</html>
