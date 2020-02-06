@@ -62,8 +62,11 @@
 
         cell1.innerHTML = id;
         cell2.innerHTML = login;
-        cell3.innerHTML = `<button id=${login} onclick="seeDetails(this.id)">Details</button>`;
-
+        if (btn !== "Details") {
+            cell3.innerHTML = `<button id=${login} onclick="seeDetails(this.id)">Details</button>`;
+        } else {
+            cell4.innerHTML = "Details";
+        }
     }
 
     function seeDetails(login) {
